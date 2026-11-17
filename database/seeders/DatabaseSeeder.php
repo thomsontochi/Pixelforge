@@ -3,23 +3,30 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Services\Billing\CreditLedger;
+use App\Support\Money;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
-    use WithoutModelEvents;
-
     /**
-     * Seed the application's database.
+     * A demo operator account for reviewers: can generate and open the admin report.
      */
-    public function run(): void
+    public function run(CreditLedger $ledger): void
     {
-        // User::factory(10)->create();
+        $user = User::query()->firstOrCreate(
+            ['email' => 'demo@pixelforge.test'],
+            [
+                'name' => 'Demo Operator',
+                'password' => 'pixelforge-demo',
+                'email_verified_at' => now(),
+            ],
+        );
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        $user->forceFill(['is_admin' => true])->save();
+
+        if ($user->balancePico() === 0) {
+            $ledger->purchase($user, 10 * Money::PICO_PER_DOLLAR);
+        }
     }
 }

@@ -35,4 +35,14 @@ return [
         ],
     ],
 
+    'pixelforge' => [
+        'base_url' => env('PIXELFORGE_BASE_URL', 'https://pixelforge.promptedit.dev/v1'),
+        'api_key' => env('PIXELFORGE_API_KEY'),
+        'webhook_secret' => env('PIXELFORGE_WEBHOOK_SECRET'),
+        // Users pay Pixelforge's cost plus this markup, in percent.
+        'markup_percent' => (int) env('PIXELFORGE_MARKUP_PERCENT', 25),
+        // How old a webhook signature timestamp may be before we reject it (replay protection).
+        'webhook_tolerance_seconds' => (int) env('PIXELFORGE_WEBHOOK_TOLERANCE', 300),
+    ],
+
 ];

@@ -13,7 +13,10 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Laravel'),
+    'name' => env('APP_NAME', 'Pixelforge Studio'),
+
+    // Show the seeded demo account's login on the landing page (for reviewers).
+    'demo_login_hint' => (bool) env('DEMO_LOGIN_HINT', false),
 
     /*
     |--------------------------------------------------------------------------
