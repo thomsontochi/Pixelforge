@@ -217,6 +217,9 @@ const steps = [
 
         <footer class="border-t border-foreground/10 py-6 text-center text-xs text-muted-foreground">
             Images by Pixelforge, a simulated provider. Credits are test credits; no real payments.
+            <span class="mx-1.5">·</span>
+            Pixelforge Studio&trade; — built by
+            <a href="https://github.com/thomsontochi" target="_blank" rel="noopener" class="underline-offset-4 hover:text-foreground hover:underline">Austin Opia</a>
         </footer>
     </div>
 </template>
