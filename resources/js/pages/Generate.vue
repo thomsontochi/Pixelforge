@@ -48,7 +48,7 @@ type Generation = {
 type Estimate = { min: string; expected: string; max: string; can_afford: boolean };
 
 const props = defineProps<{
-    generations: Generation[];
+    generations: { data: Generation[]; links: { url: string | null; label: string; active: boolean }[] };
     balance: string;
     sizes: string[];
     qualities: string[];
@@ -168,7 +168,7 @@ function buy(amount: number) {
 }
 
 // ---- Live status -----------------------------------------------------------
-const hasActive = computed(() => props.generations.some((g) => !g.is_final));
+const hasActive = computed(() => props.generations.data.some((g) => !g.is_final));
 const now = ref(Date.now());
 let pollTimer: ReturnType<typeof setInterval> | undefined;
 let clockTimer: ReturnType<typeof setInterval> | undefined;
@@ -365,12 +365,12 @@ function reuse(generation: Generation) {
                 <Link :href="creditsIndex()" class="text-sm text-muted-foreground underline-offset-4 hover:underline">Credit activity →</Link>
             </div>
 
-            <div v-if="generations.length === 0" class="rounded-2xl border border-dashed p-10 text-center">
+            <div v-if="generations.data.length === 0" class="rounded-2xl border border-dashed p-10 text-center">
                 <p class="font-medium">No images yet</p>
                 <p class="mt-1 text-sm text-muted-foreground">Write a prompt, check the price, and generate. You only pay for images that succeed.</p>
             </div>
 
-            <article v-for="generation in generations" :key="generation.id" class="overflow-hidden rounded-2xl border bg-card">
+            <article v-for="generation in generations.data" :key="generation.id" class="overflow-hidden rounded-2xl border bg-card">
                 <div class="flex flex-col gap-4 p-4 sm:flex-row">
                     <!-- Image -->
                     <div class="relative flex aspect-square w-full shrink-0 items-center justify-center overflow-hidden rounded-xl bg-muted sm:w-36">
@@ -475,7 +475,18 @@ function reuse(generation: Generation) {
                 </div>
             </article>
 
-            <p v-if="generations.length >= 50" class="text-center text-xs text-muted-foreground">Showing your latest 50 generations.</p>
+            <nav v-if="generations.links.length > 3" class="flex flex-wrap justify-center gap-1">
+                <template v-for="link in generations.links" :key="link.label">
+                    <Link
+                        v-if="link.url"
+                        :href="link.url"
+                        preserve-scroll
+                        class="rounded-md px-3 py-1 text-sm"
+                        :class="link.active ? 'bg-primary text-primary-foreground' : 'hover:bg-muted'"
+                        ><span v-html="link.label"
+                    /></Link>
+                </template>
+            </nav>
         </section>
     </div>
 </template>

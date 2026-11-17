@@ -8,6 +8,7 @@ use App\Services\Pixelforge\PixelforgeClient;
 use App\Services\Pixelforge\PixelforgeException;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Throwable;
 
 /**
  * Polling fallback: webhook delivery isn't guaranteed, so ask Pixelforge directly
@@ -46,6 +47,19 @@ class SyncGeneration implements ShouldQueue
             }
 
             throw $e;
+        }
+    }
+
+    /**
+     * The job is dead (e.g. a persistent auth error). If we leave the generation running the hold
+     * is never released, so call it failed rather than keep the user's credits reserved forever.
+     */
+    public function failed(?Throwable $exception): void
+    {
+        $generation = Generation::find($this->generationId);
+
+        if ($generation !== null && ! $generation->status->isFinal()) {
+            app(GenerationUpdater::class)->reject($generation, 'sync_failed', 'We could not confirm this generation with Pixelforge. You were not charged.');
         }
     }
 }

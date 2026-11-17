@@ -28,7 +28,7 @@ class PixelforgeClient
     public function pricing(): array
     {
         return Cache::remember('pixelforge.pricing', now()->addMinutes(5), function () {
-            return $this->send(fn () => Http::baseUrl($this->baseUrl)->acceptJson()->timeout(10)->get('/pricing'));
+            return $this->send(fn () => $this->request()->timeout(10)->get('/pricing'));
         });
     }
 

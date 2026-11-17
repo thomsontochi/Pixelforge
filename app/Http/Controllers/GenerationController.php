@@ -22,8 +22,8 @@ class GenerationController extends Controller
         $user = $request->user();
 
         return Inertia::render('Generate', [
-            'generations' => $user->generations()->latest('id')->limit(50)->get()
-                ->map(fn (Generation $g) => $g->toPresentation()),
+            'generations' => $user->generations()->latest('id')->paginate(20)
+                ->through(fn (Generation $g) => $g->toPresentation()),
             'balance' => Money::format($user->balancePico()),
             'sizes' => StoreGenerationRequest::SIZES,
             'qualities' => StoreGenerationRequest::QUALITIES,
@@ -35,7 +35,8 @@ class GenerationController extends Controller
     {
         $createGeneration->handle($request->user(), $request->validated());
 
-        return back();
+        // Page 1, where the brand-new generation shows up first.
+        return to_route('generations.index');
     }
 
     /**

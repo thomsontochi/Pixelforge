@@ -23,7 +23,7 @@ use Illuminate\Support\Facades\Log;
 class GenerationUpdater
 {
     /** Our own give-up codes: we told the user it failed, but Pixelforge may still have made it. */
-    private const LOCAL_REJECTIONS = ['gave_up', 'submit_failed', 'not_found'];
+    private const LOCAL_REJECTIONS = ['gave_up', 'submit_failed', 'not_found', 'sync_failed'];
 
     public function __construct(
         private readonly PriceCalculator $prices,
@@ -97,7 +97,12 @@ class GenerationUpdater
 
             if ($incoming === GenerationStatus::Succeeded) {
                 $this->recordProviderUsage($generation, $remote);
-                $generation->charged_pico = $this->prices->customerPrice($generation->provider_cost_pico);
+                // The user was shown a maximum and we held it; never charge more than that,
+                // even if the real usage somehow comes in above the estimate's bounds.
+                $generation->charged_pico = min(
+                    $this->prices->customerPrice($generation->provider_cost_pico),
+                    $generation->max_cost_pico,
+                );
             } elseif ($incoming === GenerationStatus::Failed) {
                 $this->markFailed($generation, $remote['error']['code'] ?? 'generation_failed', $remote['error']['message'] ?? 'The generation failed.', $remote['completed_at'] ?? null);
             }
