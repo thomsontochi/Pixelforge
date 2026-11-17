@@ -77,11 +77,11 @@ tried in a few clicks. The admin report is at `/admin/report`.
   brief allows. Expired images show a clear "Image link expired" tile instead of a
   broken image.
 - **What I'd do next:**
-  - Our own "3 at a time" submit queue, so we never hit Pixelforge's concurrency limit
-    and requests go out in order.
-  - Store finished images ourselves, so history keeps its images after 24 hours.
-  - Real payments with Stripe Checkout, adding credits only once Stripe's webhook
-    confirms the payment.
+    - Our own "3 at a time" submit queue, so we never hit Pixelforge's concurrency limit
+      and requests go out in order.
+    - Store finished images ourselves, so history keeps its images after 24 hours.
+    - Real payments with Stripe Checkout, adding credits only once Stripe's webhook
+      confirms the payment.
 
 ## Setup
 

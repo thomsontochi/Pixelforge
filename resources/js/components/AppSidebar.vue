@@ -24,7 +24,9 @@ const page = usePage();
 const mainNavItems = computed<NavItem[]>(() => [
     { title: 'Generate', href: generateIndex(), icon: Sparkles },
     { title: 'Credit activity', href: creditsIndex(), icon: Wallet },
-    ...(page.props.auth.isAdmin ? [{ title: 'Admin report', href: report(), icon: ChartColumn }] : []),
+    ...(page.props.auth.isAdmin
+        ? [{ title: 'Admin report', href: report(), icon: ChartColumn }]
+        : []),
 ]);
 </script>
 
